@@ -37,8 +37,6 @@
    - 生成Waypoint列表（经纬度、高度、速度、相机参数），生成为网格点的json。
    - 静态统计服务验证覆盖率：计算实际重叠度与预期偏差，若>5%，触发重新校准。
 
-该算法的优势在于**自适应性**：可根据实时传感器数据（如风速、高度变化）动态调整参数，确保在复杂地形（如山区）下覆盖率>95%。未来可扩展支持AI-based优化，如使用遗传算法最小化路径长度。
-
 示例伪代码（在FlightTaskServiceImpl中实现）：
 ```java
 public List<Waypoint> generatePath(double height, double fov, double sideOverlap, double forwardOverlap) {
@@ -54,27 +52,21 @@ public List<Waypoint> generatePath(double height, double fov, double sideOverlap
 
 ## 项目结构
 
-项目采用模块化设计，主要分为实现层（impl）和接口层（Service）。以下是关键类和服务：
+项目采用模块化设计，主要分为实现层（impl）和接口层（Service）。以下是关键类和服务,部分服务涉及到航线规划的服务请忽略：
 
 ### 接口层（Service）
 - **CameraCalService**：相机校准服务，处理影像生成前的相机参数调整（包括FOV和传感器数据校准）。
 - **FlightStaticsService**：飞行静态服务，管理飞行数据的统计和监控（覆盖率验证）。
 - **FlightTaskBreakpointService**：飞行任务断点服务，支持任务中断后续航。
-- **FlightTaskService**：核心飞行任务服务，协调路径执行（集成算法核心计算）。
-- **KmService**：公里路径服务，基于距离优化的路径规划。
 - **WaylineJobService**：路径作业服务，管理路径任务的队列和执行。
 - **WaylineRedisService**：路径Redis服务，用于路径数据的缓存和同步（存储计算参数）。
 
 ### 实现层（impl）
-- **FlightTaskBreakpointServiceImpl**：飞行任务断点服务的实现。
-- **FlightTaskServiceImpl**：飞行任务服务的实现（主算法入口）。
 - **GeometryServiceImpl**：几何服务实现，支持路径的几何计算（如多边形覆盖和重叠验证）。
 - **GridWayCalService**：网格路径校准服务，优化网格化覆盖（应用行间距和步长）。
 - **KmServiceImpl**：公里路径服务的实现。
 - **M3DCalService**：3D校准服务，针对三维影像生成（扩展FOV到立体视差）。
 - **SdkWaylineService**：SDK路径服务，与无人机SDK集成生成路径。
-- **WaylineJobServiceImpl**：路径作业服务的实现。
-- **WaylineRedisServiceImpl**：路径Redis服务的实现。
 
 ## 许可证
 
